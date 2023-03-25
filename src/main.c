@@ -11,9 +11,9 @@
 bool is_running = false;
 
 vec2_t vertices[4] = {
-	{.x = 40, .y = 40},
-	{.x = 80, .y = 40},
-	{.x = 40, .y = 40}
+	{ .x = 40, .y = 40 },
+	{ .x = 80, .y = 40 },
+	{ .x = 40, .y = 80 }
 };
 
 void process_input(void) {
