@@ -10,7 +10,7 @@
 
 bool is_running = false;
 
-vec2_t vertices[4] = {
+vec2_t vertices[5] = {
 	{ .x = 40, .y = 40 },
 	{ .x = 80, .y = 40 },
 	{ .x = 40, .y = 80 },
@@ -58,7 +58,7 @@ void triangle_fill(vec2_t v0, vec2_t v1, vec2_t v2, uint32_t color) {
 			bool is_inside = w0 >= 0 && w1 >=0 && w2 >=0;
 			
 			if (is_inside) {
-				draw_pixel(x, y, 0xFF00FF00);
+				draw_pixel(x, y, color);
 			}
 		}
 	}
@@ -71,10 +71,11 @@ void render(void) {
 	vec2_t v1 = vertices[1];
 	vec2_t v2 = vertices[2];
 	vec2_t v3 = vertices[3];
-	vec2_t v3 = vertices[4];
+	vec2_t v4 = vertices[4];
 	
 	triangle_fill(v0, v1, v2, 0xFF00FF00);
-	triangle_fill(v3, v2, v1, 0xFFA74De3);
+	triangle_fill(v3, v2, v1, 0xFFA74DE3);
+	triangle_fill(v4, v1, v0, 0xFF0390FC);
 	
 	render_framebuffer();
 }
