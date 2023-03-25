@@ -51,7 +51,7 @@ bool is_top_left(vec2_t* start, vec2_t* end) {
   return is_left_edge || is_top_edge;
 }
 
-int edge_cross(vec2_t* a, vec2_t* b, vec2_t* p) {
+float edge_cross(vec2_t* a, vec2_t* b, vec2_t* p) {
 	vec2_t ab = { b->x - a->x, b->y - a->y };
 	vec2_t ap = { p->x - a->x, p->y - a->y };
 	return ab.x * ap.y - ab.y * ap.x;
@@ -59,30 +59,30 @@ int edge_cross(vec2_t* a, vec2_t* b, vec2_t* p) {
 
 void triangle_fill(vec2_t v0, vec2_t v1, vec2_t v2) {
 	// Find the bounding box with all candidate pixels
-	int x_min = MIN(MIN(v0.x, v1.x), v2.x);
-	int y_min = MIN(MIN(v0.y, v1.y), v2.y);
-	int x_max = MAX(MAX(v0.x, v1.x), v2.x);
-	int y_max = MAX(MAX(v0.y, v1.y), v2.y);
+	int x_min = floor(MIN(MIN(v0.x, v1.x), v2.x));
+	int y_min = floor(MIN(MIN(v0.y, v1.y), v2.y));
+	int x_max = ceil(MAX(MAX(v0.x, v1.x), v2.x));
+	int y_max = ceil(MAX(MAX(v0.y, v1.y), v2.y));
 	
-	int delta_w0_col = (v1.y - v2.y);
-	int delta_w1_col = (v2.y - v0.y);
-	int delta_w2_col = (v0.y - v1.y);
+	float delta_w0_col = (v1.y - v2.y);
+	float delta_w1_col = (v2.y - v0.y);
+	float delta_w2_col = (v0.y - v1.y);
 	
-	int delta_w0_row = (v2.x - v1.x);
-	int delta_w1_row = (v0.x - v2.x);
-	int delta_w2_row = (v1.x - v0.x);
+	float delta_w0_row = (v2.x - v1.x);
+	float delta_w1_row = (v0.x - v2.x);
+	float delta_w2_row = (v1.x - v0.x);
 	
 	// Compute the area of the entire triangle/parallelogram
 	float area = edge_cross(&v0, &v1, &v2);
 		
-	int bias0 = is_top_left(&v1, &v2) ? 0 : -1;
-	int bias1 = is_top_left(&v2, &v0) ? 0 : -1;
-	int bias2 = is_top_left(&v0, &v1) ? 0 : -1;
+	float bias0 = is_top_left(&v1, &v2) ? 0 : -1;
+	float bias1 = is_top_left(&v2, &v0) ? 0 : -1;
+	float bias2 = is_top_left(&v0, &v1) ? 0 : -1;
 	
-	vec2_t p0 = { x_min, y_min };
-	int w0_row = edge_cross(&v1, &v2, &p0) + bias0;
-	int w1_row = edge_cross(&v2, &v0, &p0) + bias1;
-	int w2_row = edge_cross(&v0, &v1, &p0) + bias2;
+	vec2_t p0 = { x_min + 0.5f, y_min + 0.5f };
+	float w0_row = edge_cross(&v1, &v2, &p0) + bias0;
+	float w1_row = edge_cross(&v2, &v0, &p0) + bias1;
+	float w2_row = edge_cross(&v0, &v1, &p0) + bias2;
 	
 	// Loop all candidate pixels inside the bounding box
 	for (int y = y_min; y <= y_max; y++) {
@@ -124,11 +124,15 @@ void triangle_fill(vec2_t v0, vec2_t v1, vec2_t v2) {
 void render(void) {
 	clear_framebuffer(0xFF000000);
 	
-	vec2_t v0 = vertices[0];
-	vec2_t v1 = vertices[1];
-	vec2_t v2 = vertices[2];
-	vec2_t v3 = vertices[3];
+	float angle = SDL_GetTicks() / 1000.0f * 0.1;
 	
+	vec2_t center = { SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0F };
+	
+	vec2_t v0 = vec2_rotate(vertices[0], center, angle);
+	vec2_t v1 = vec2_rotate(vertices[1], center, angle);
+	vec2_t v2 = vec2_rotate(vertices[2], center, angle);
+	vec2_t v3 = vec2_rotate(vertices[3], center, angle);
+		
 	triangle_fill(v0, v1, v2);
 	triangle_fill(v3, v2, v1);
 	
