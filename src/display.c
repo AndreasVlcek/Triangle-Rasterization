@@ -18,19 +18,19 @@ bool create_window(void) {
 	
 	window = SDL_CreateWindow("Triangle rasterization", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_width, window_height, 0);
 	if (!window) {
-		fprintf("Error creating SDL window.\n");
+		fprintf(stderr, "Error creating SDL window.\n");
 		return false;
 	}
 	
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
 	if (!renderer) {
-		fprintf("Error creating SDL renderer.\n");
+		fprintf(stderr, "Error creating SDL renderer.\n");
 		return false;
 	}
 	
 	framebuffer = malloc(sizeof(uint32_t) * SCREEN_WIDTH * SCREEN_HEIGHT);
 	if (!framebuffer) {
-		fprintf("Error allocating memory for the framebuffer.\n");
+		fprintf(stderr, "Error allocating memory for the framebuffer.\n");
 		return false;		
 	}
 	
@@ -57,7 +57,7 @@ void render_framebuffer(void) {
 		framebuffer_texture,
 		NULL,
 		framebuffer,
-		(int)(SCREE_WIDTH * sizeof(uint32_t))
+		(int)(SCREEN_WIDTH * sizeof(uint32_t))
 	);
 	SDL_RenderCopy(renderer, framebuffer_texture, NULL, NULL);
 	SDL_RenderPresent(renderer);

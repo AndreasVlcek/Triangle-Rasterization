@@ -1,5 +1,5 @@
 #include <math.h>
-#include "vec2.h>"
+#include "vec2.h"
 
 vec2_t vec_new(float x, float y) {
 	vec2_t result = {x, y};
@@ -42,11 +42,11 @@ float vec2_length(vec2_t* v) {
 	return sqrt(v->x * v->x + v->y * v->y);
 }
 
-float vec2_dot(vec2_t* a, veec2_t* b) {
+float vec2_dot(vec2_t* a, vec2_t* b) {
 	return (a->x * b->x) + (a->y * b->y);
 }
 
-float vec2_cross(vec2_t* a, veec2_t* b) {
+float vec2_cross(vec2_t* a, vec2_t* b) {
 	return a->x * b->y - a->y * b->x;
 }
 
@@ -57,7 +57,7 @@ void vec2_normalize(vec2_t* v) {
 }
 
 vec2_t vec2_rotate(vec2_t v, vec2_t center, float angle) {
-	vect2_t rot;
+	vec2_t rot;
 	v.x -= center.x;
 	v.y -= center.y;
 	rot.x = v.x * cos(angle) - v.y * sin(angle);
