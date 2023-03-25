@@ -64,6 +64,14 @@ void triangle_fill(vec2_t v0, vec2_t v1, vec2_t v2) {
 	int x_max = MAX(MAX(v0.x, v1.x), v2.x);
 	int y_max = MAX(MAX(v0.y, v1.y), v2.y);
 	
+	int delta_w0_col = (v1.y - v2.y);
+	int delta_w1_col = (v2.y - v0.y);
+	int delta_w2_col = (v0.y - v1.y);
+	
+	int delta_w0_row = (v2.x - v1.x);
+	int delta_w1_row = (v0.x - v2.x);
+	int delta_w2_row = (v1.x - v0.x);
+	
 	// Compute the area of the entire triangle/parallelogram
 	float area = edge_cross(&v0, &v1, &v2);
 		
@@ -71,15 +79,18 @@ void triangle_fill(vec2_t v0, vec2_t v1, vec2_t v2) {
 	int bias1 = is_top_left(&v2, &v0) ? 0 : -1;
 	int bias2 = is_top_left(&v0, &v1) ? 0 : -1;
 	
+	vec2_t p0 = { x_min, y_min };
+	int w0_row = edge_cross(&v1, &v2, &p0) + bias0;
+	int w1_row = edge_cross(&v2, &v0, &p0) + bias1;
+	int w2_row = edge_cross(&v0, &v1, &p0) + bias2;
+	
 	// Loop all candidate pixels inside the bounding box
 	for (int y = y_min; y <= y_max; y++) {
-		for (int x = x_min; x <= x_max; x++) {
-			vec2_t p = {x, y};
-			
-			int w0 = edge_cross(&v1, &v2, &p) + bias0;
-			int w1 = edge_cross(&v2, &v0, &p) + bias1;
-			int w2 = edge_cross(&v0, &v1, &p) + bias2;
-						
+		float w0 = w0_row;
+		float w1 = w1_row;
+		float w2 = w2_row;
+		
+		for (int x = x_min; x <= x_max; x++) {		
 			bool is_inside = w0 >= 0 && w1 >=0 && w2 >=0;
 			
 			if (is_inside) {
@@ -100,7 +111,13 @@ void triangle_fill(vec2_t v0, vec2_t v1, vec2_t v2) {
 				
 				draw_pixel(x, y, interp_color);
 			}
+			w0 += delta_w0_col;
+			w1 += delta_w1_col;
+			w2 += delta_w2_col;
 		}
+		w0_row += delta_w0_row;
+		w1_row += delta_w1_row;
+		w2_row += delta_w2_row;
 	}
 }
 
