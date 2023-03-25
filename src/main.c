@@ -33,6 +33,13 @@ void process_input(void) {
 	}
 }
 
+bool is_top_left(vec2_t* start, vec2_t* end) {
+  vec2_t edge = { end->x - start->x, end->y - start->y };
+  bool is_top_edge = edge.y == 0 && edge.x > 0;
+  bool is_left_edge = edge.y < 0;
+  return is_left_edge || is_top_edge;
+}
+
 int edge_cross(vec2_t* a, vec2_t* b, vec2_t* p) {
 	vec2_t ab = { b->x - a->x, b->y - a->y };
 	vec2_t ap = { p->x - a->x, p->y - a->y };
@@ -46,14 +53,18 @@ void triangle_fill(vec2_t v0, vec2_t v1, vec2_t v2, uint32_t color) {
 	int x_max = MAX(MAX(v0.x, v1.x), v2.x);
 	int y_max = MAX(MAX(v0.y, v1.y), v2.y);
 	
+	int bias0 = is_top_left(&v1, &v2) ? 0 : -1;
+	int bias1 = is_top_left(&v2, &v0) ? 0 : -1;
+	int bias2 = is_top_left(&v0, &v1) ? 0 : -1;
+
 	// Loop all candidate pixels inside the bounding box
 	for (int y = y_min; y <= y_max; y++) {
 		for (int x = x_min; x <= x_max; x++) {
 			vec2_t p = {x, y};
 			
-			int w0 = edge_cross(&v1, &v2, &p);
-			int w1 = edge_cross(&v2, &v0, &p);
-			int w2 = edge_cross(&v0, &v1, &p);
+			int w0 = edge_cross(&v1, &v2, &p) + bias0;
+			int w1 = edge_cross(&v2, &v0, &p) + bias1;
+			int w2 = edge_cross(&v0, &v1, &p) + bias2;
 			
 			bool is_inside = w0 >= 0 && w1 >=0 && w2 >=0;
 			
