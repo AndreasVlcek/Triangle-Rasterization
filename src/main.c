@@ -13,7 +13,9 @@ bool is_running = false;
 vec2_t vertices[4] = {
 	{ .x = 40, .y = 40 },
 	{ .x = 80, .y = 40 },
-	{ .x = 40, .y = 80 }
+	{ .x = 40, .y = 80 },
+	{ .x = 90, .y = 90 },
+	{ .x = 75, .y = 20 },
 };
 
 void process_input(void) {
@@ -68,8 +70,11 @@ void render(void) {
 	vec2_t v0 = vertices[0];
 	vec2_t v1 = vertices[1];
 	vec2_t v2 = vertices[2];
+	vec2_t v3 = vertices[3];
+	vec2_t v3 = vertices[4];
 	
 	triangle_fill(v0, v1, v2, 0xFF00FF00);
+	triangle_fill(v3, v2, v1, 0xFFA74De3);
 	
 	render_framebuffer();
 }
